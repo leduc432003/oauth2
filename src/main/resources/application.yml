@@ -1,0 +1,37 @@
+spring:
+  application:
+    name: oauth2-jwt
+  jpa:
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: jdbc:mysql://localhost:3307/oauth2?allowPublicKeyRetrieval=true&useSSL=false
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 394609302540-360t5tg9m7ovr8hcphvrpelcupb7qs5g.apps.googleusercontent.com
+            client-secret: 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
+            scope:
+              - email
+              - profile
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+app:
+  jwt:
+    secret: c3ByaW5nLWJvb3Qtc2VjdXJpdHktb2F1dGgyLWp3dC1zZWNyZXQta2V5LXZlcnktbG9uZy1zZWNyZXQta2V5LXVzZWQtdG8tc2lnbi10aGUtdG9rZW4=
+    access-token-expiration: 3600000   # 60 minutes
+    refresh-token-expiration: 604800000 # 7 days
+  oauth2:
+    redirect-uri: http://localhost:3000/oauth2/redirect
+    success-redirect-uri: http://localhost:3000/oauth2/success
+    failure-redirect-uri: http://localhost:3000/oauth2/failure
+  cors:
+    allowed-origins: http://localhost:3000
