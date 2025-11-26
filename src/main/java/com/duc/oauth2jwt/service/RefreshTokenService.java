@@ -4,11 +4,9 @@ import com.duc.oauth2jwt.exception.AuthenticationException;
 import com.duc.oauth2jwt.model.RefreshToken;
 import com.duc.oauth2jwt.model.User;
 import com.duc.oauth2jwt.repository.RefreshTokenRepository;
-import com.duc.oauth2jwt.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.Optional;
@@ -22,20 +20,26 @@ public class RefreshTokenService {
     private Long refreshTokenDurationMs;
 
     private final RefreshTokenRepository refreshTokenRepository;
-    private final UserRepository userRepository;
 
     public Optional<RefreshToken> findByToken(String token) {
         return refreshTokenRepository.findByToken(token);
     }
 
     public RefreshToken createRefreshToken(User user) {
-        // Delete existing token if any
-        refreshTokenRepository.findByUser(user).ifPresent(refreshTokenRepository::delete);
+        // Delete existing token for this user if any
+        refreshTokenRepository.deleteByUserId(user.getId());
 
-        RefreshToken refreshToken = new RefreshToken();
-        refreshToken.setUser(user);
-        refreshToken.setToken(UUID.randomUUID().toString());
-        refreshToken.setExpiryDate(Instant.now().plusMillis(refreshTokenDurationMs));
+        Instant expiryDate = Instant.now().plusMillis(refreshTokenDurationMs);
+        Long ttlSeconds = refreshTokenDurationMs / 1000;
+
+        RefreshToken refreshToken = RefreshToken.builder()
+                .id(UUID.randomUUID().toString())
+                .token(UUID.randomUUID().toString())
+                .userId(user.getId())
+                .userEmail(user.getEmail())
+                .expiryDate(expiryDate)
+                .timeToLive(ttlSeconds)
+                .build();
 
         return refreshTokenRepository.save(refreshToken);
     }
@@ -48,17 +52,13 @@ public class RefreshTokenService {
         return token;
     }
 
-    @Transactional
     public void deleteByToken(String token) {
         RefreshToken refreshToken = refreshTokenRepository.findByToken(token)
                 .orElseThrow(() -> new AuthenticationException("Refresh token not found"));
         refreshTokenRepository.delete(refreshToken);
     }
 
-    @Transactional
     public void deleteByUserId(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new AuthenticationException("User not found with id: " + userId));
-        refreshTokenRepository.deleteByUser(user);
+        refreshTokenRepository.deleteByUserId(userId);
     }
 }

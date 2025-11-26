@@ -20,7 +20,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -103,8 +102,11 @@ public class AuthService {
     public AuthResponse refreshToken(String refreshToken) {
         return refreshTokenService.findByToken(refreshToken)
                 .map(refreshTokenService::verifyExpiration)
-                .map(RefreshToken::getUser)
-                .map(user -> {
+                .map(token -> {
+                    // Fetch user from database using userId stored in RefreshToken
+                    User user = userRepository.findById(token.getUserId())
+                            .orElseThrow(() -> new AuthenticationException("User not found"));
+                    
                     String accessToken = tokenProvider.generateTokenFromUsername(user.getEmail());
 
                     return AuthResponse.builder()

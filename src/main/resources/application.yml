@@ -9,13 +9,19 @@ spring:
     username: root
     password: 123456
     driver-class-name: com.mysql.cj.jdbc.Driver
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      timeout: 60000
   security:
     oauth2:
       client:
         registration:
           google:
-            client-id:
-            client-secret:
+            client-id: ${GOOGLE_CLIENT_ID:your-google-client-id}
+            client-secret: ${GOOGLE_CLIENT_SECRET:your-google-client-secret}
             scope:
               - email
               - profile
@@ -26,13 +32,13 @@ server:
 
 app:
   jwt:
-    secret: c3ByaW5nLWJvb3Qtc2VjdXJpdHktb2F1dGgyLWp3dC1zZWNyZXQta2V5LXZlcnktbG9uZy1zZWNyZXQta2V5LXVzZWQtdG8tc2lnbi10aGUtdG9rZW4=
+    secret: ${JWT_SECRET:c3ByaW5nLWJvb3Qtc2VjdXJpdHktb2F1dGgyLWp3dC1zZWNyZXQta2V5LXZlcnktbG9uZy1zZWNyZXQta2V5LXVzZWQtdG8tc2lnbi10aGUtdG9rZW4=}
     access-token-expiration: 3600000   # 60 minutes
     refresh-token-expiration: 604800000 # 7 days
   oauth2:
-    redirect-uri: http://localhost:3000/oauth2/redirect
-    success-redirect-uri: http://localhost:3000/oauth2/success
-    failure-redirect-uri: http://localhost:3000/oauth2/failure
+    redirect-uri: http://localhost:8080/api/login/oauth2/code/google
+    success-redirect-uri: ${OAUTH2_SUCCESS_REDIRECT_URI:http://localhost:3000/oauth2/success}
+    failure-redirect-uri: ${OAUTH2_FAILURE_REDIRECT_URI:http://localhost:3000/oauth2/failure}
   cors:
     allowed-origins: http://localhost:3000
 
