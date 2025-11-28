@@ -1,6 +1,13 @@
 # OAuth2 JWT Authentication with Redis
 
+[![CI/CD Pipeline](https://github.com/leduc432003/oauth2/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/leduc432003/oauth2/actions/workflows/ci-cd.yml)
+[![Build and Test](https://github.com/leduc432003/oauth2/actions/workflows/build.yml/badge.svg)](https://github.com/leduc432003/oauth2/actions/workflows/build.yml)
+[![Docker Image](https://img.shields.io/docker/v/your-dockerhub-username/oauth2-jwt?label=docker&logo=docker)](https://hub.docker.com/r/your-dockerhub-username/oauth2-jwt)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 Spring Boot application với OAuth2 (Google) và JWT authentication, sử dụng Redis để lưu trữ refresh tokens.
+
+> 📖 **[Xem hướng dẫn CI/CD chi tiết](./CI-CD-GUIDE.md)**
 
 ## 🚀 Tính năng
 
